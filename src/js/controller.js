@@ -1,6 +1,7 @@
 
 import icons from 'url:../img/icons.svg';
 import * as classes from './config.js'
+
 const recipeContainer=document.querySelector('.recipe')
 const searchButton=document.querySelector('.search__btn')
 const resultsContainer=document.querySelector('.search-results')
@@ -8,24 +9,11 @@ const resultsContainer=document.querySelector('.search-results')
 const dropDownMain=[
   "carrot", "broccoli", "asparagus", "cauliflower", "corn", "cucumber", "green pepper", "lettuce", "mushrooms", "onion", "potato", "pumpkin", "red pepper", "tomato", "beetroot", "brussel sprouts", "peas", "zucchini", "radish", "sweet potato", "artichoke", "leek", "cabbage", "celery", "chili", "garlic", "basil", "coriander", "parsley", "dill", "rosemary", "oregano", "cinnamon", "saffron", "green bean", "bean", "chickpea", "lentil", "apple", "apricot", "avocado", "banana", "blackberry", "blackcurrant", "blueberry", "boysenberry", "cherry", "coconut", "fig", "grape", "grapefruit", "kiwifruit", "lemon", "lime", "lychee", "mandarin", "mango", "melon", "nectarine", "orange", "papaya", "passion fruit", "peach", "pear", "pineapple", "plum", "pomegranate", "quince", "raspberry", "strawberry", "watermelon", "salad", "pizza", "pasta", "popcorn", "lobster", "steak", "bbq", "pudding", "hamburger", "pie", "cake", "sausage", "tacos", "kebab", "poutine", "seafood", "chips", "fries", "masala", "paella", "som tam", "chicken", "toast", "marzipan", "tofu", "ketchup", "hummus", "chili", "maple syrup", "parma ham", "fajitas", "champ", "lasagna", "poke", "chocolate", "croissant", "arepas", "bunny chow", "pierogi", "donuts", "rendang", "sushi", "ice cream", "duck", "curry", "beef", "goat", "lamb", "turkey", "pork", "fish", "crab", "bacon", "ham", "pepperoni", "salami", "ribs"]
 
-
+function hash(){
 window.addEventListener('hashchange',both)
   window.addEventListener('load',both)
+}
 
-// function init(){
-// let init=`<div class="recipe">
-//         <div class="message">
-//           <div>
-//             <svg>
-//               <use href="src/img/icons.svg#icon-smile"></use>
-//             </svg>
-//           </div>
-//           <p>Start by searching for a recipe or an ingredient. Have fun!</p>
-//         </div>`
-//         recipeContainer.innerHTML=''
-//         recipeContainer.insertAdjacentHTML('afterbegin',init)
-// }
-// init()
   function both(data){
     console.log(data)
     if(!data)return
@@ -40,48 +28,37 @@ async function fetchData(){
 let link=window.location.hash.slice(1)
   
  data=await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${link}`)
-
- const JSON=await data.json()
-    let arr=await JSON.data.recipe;
-    
-   
-
-// setTimeout(function(){ new Promise(function(reject){
-
-//   // resolve(elements(arr))
-//   reject(function(){recipeContainer.innerHTML=''
-//     console.log('taking too long')})
-//   })
-//   ,3})
-  
-  elements(arr)
-
+ console.log(data)
  
 
-  // renderSpinner(data)
-// const data=await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${link}`)
+ if(!data)return
 
-}catch{return setTimeout(function(){ 
-  recipeContainer.innerHTML=''
+ const JSON=await data.json()
+ if(data.ok===false) throw new Error(`${JSON.message}`)
+ console.log(JSON)
+    let arr=await JSON.data.recipe;
+    
+  elements(arr)
+
+}catch(err){ 
 let error=`<div class="error">
 <div>
 <svg>
   <use href="${icons}#icon-alert-triangle"></use>
 </svg>
 </div>
-<p>Recipe not found, please give a proper recipe number!`
- 
+<p>${err}`
+
+  recipeContainer.innerHTML=''
   recipeContainer.insertAdjacentHTML('afterbegin',error)
-},3000)}
+}
   
 }
 
-function renderSpinner(data)
+function renderSpinner()
 {
 
-    
-  // if(!data){setTimeout(async function(){
-  //  },0.30)}
+  
   let spinnerHtml=`<div class="spinner">
   <svg>
     <use href="${icons}#icon-loader"></use>
@@ -94,14 +71,8 @@ function renderSpinner(data)
 }
 
 
-// function fetchData(){
-// renderSpinner()
-
-// }
-
-
 const elements=function(recipeItems){
-  // console.log(recipeItems)
+  
   
   let html=
   `<figure class="recipe__fig">
@@ -219,19 +190,15 @@ async function sideRecipes(name){
   const data =await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes?search=${name}`)
   const JSON=await data.json()
 
-// let arr=await JSON.data.recipe;
 let arr=await JSON.data.recipes;
-// console.log(arr)
-// elements(arr)
 
 elem(arr)
 }
 
 function elem(element){
- resultsContainer.innerHTML=''
+  resultsContainer.innerHTML=''
   element.map(item=>{
    
-    // console.log(item)
   let html=`
                 <li class="preview">
             <a class="preview__link preview__link--active" href="#${item.id}">
@@ -249,10 +216,13 @@ function elem(element){
               </div>
             </a>
           </li>`
-  
+
 resultsContainer.insertAdjacentHTML('afterbegin',html)
+hash()
 })
 }
+
+
 // sideSearch()
 
 

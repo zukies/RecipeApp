@@ -711,22 +711,10 @@ const dropDownMain = [
     "salami",
     "ribs"
 ];
-window.addEventListener("hashchange", both);
-window.addEventListener("load", both);
-// function init(){
-// let init=`<div class="recipe">
-//         <div class="message">
-//           <div>
-//             <svg>
-//               <use href="src/img/icons.svg#icon-smile"></use>
-//             </svg>
-//           </div>
-//           <p>Start by searching for a recipe or an ingredient. Have fun!</p>
-//         </div>`
-//         recipeContainer.innerHTML=''
-//         recipeContainer.insertAdjacentHTML('afterbegin',init)
-// }
-// init()
+function hash() {
+    window.addEventListener("hashchange", both);
+    window.addEventListener("load", both);
+}
 function both(data1) {
     console.log(data1);
     if (!data1) return;
@@ -739,7 +727,11 @@ async function fetchData() {
     try {
         let link = window.location.hash.slice(1);
         data = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${link}`);
+        console.log(data);
+        if (!data) return;
         const JSON = await data.json();
+        if (data.ok === false) throw new Error(`${JSON.message}`);
+        console.log(JSON);
         let arr = await JSON.data.recipe;
         // setTimeout(function(){ new Promise(function(reject){
         //   // resolve(elements(arr))
@@ -750,21 +742,19 @@ async function fetchData() {
         elements(arr);
     // renderSpinner(data)
     // const data=await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${link}`)
-    } catch  {
-        return setTimeout(function() {
-            recipeContainer.innerHTML = "";
-            let error = `<div class="error">
+    } catch (err) {
+        let error = `<div class="error">
 <div>
 <svg>
   <use href="${(0, _iconsSvgDefault.default)}#icon-alert-triangle"></use>
 </svg>
 </div>
-<p>Recipe not found, please give a proper recipe number!`;
-            recipeContainer.insertAdjacentHTML("afterbegin", error);
-        }, 3000);
+<p>${err}`;
+        recipeContainer.innerHTML = "";
+        recipeContainer.insertAdjacentHTML("afterbegin", error);
     }
 }
-function renderSpinner(data1) {
+function renderSpinner() {
     // if(!data){setTimeout(async function(){
     //  },0.30)}
     let spinnerHtml = `<div class="spinner">
@@ -912,6 +902,7 @@ function elem(element) {
             </a>
           </li>`;
         resultsContainer.insertAdjacentHTML("afterbegin", html);
+        hash();
     });
 } // sideSearch()
  // elem()
