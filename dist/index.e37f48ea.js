@@ -712,11 +712,10 @@ const dropDownMain = [
     "ribs"
 ];
 function hash() {
-    window.addEventListener("hashchange", both);
-    window.addEventListener("load", both);
+    window.addEventListener("hashchange", fetchData);
+    window.addEventListener("load", fetchData);
 }
 function both(data1) {
-    console.log(data1);
     if (!data1) return;
     if (data1) {
         renderSpinner();
@@ -727,21 +726,12 @@ async function fetchData() {
     try {
         let link = window.location.hash.slice(1);
         data = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${link}`);
-        console.log(data);
+        renderSpinner();
         if (!data) return;
         const JSON = await data.json();
         if (data.ok === false) throw new Error(`${JSON.message}`);
-        console.log(JSON);
         let arr = await JSON.data.recipe;
-        // setTimeout(function(){ new Promise(function(reject){
-        //   // resolve(elements(arr))
-        //   reject(function(){recipeContainer.innerHTML=''
-        //     console.log('taking too long')})
-        //   })
-        //   ,3})
         elements(arr);
-    // renderSpinner(data)
-    // const data=await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${link}`)
     } catch (err) {
         let error = `<div class="error">
 <div>
@@ -755,8 +745,6 @@ async function fetchData() {
     }
 }
 function renderSpinner() {
-    // if(!data){setTimeout(async function(){
-    //  },0.30)}
     let spinnerHtml = `<div class="spinner">
   <svg>
     <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
@@ -765,11 +753,7 @@ function renderSpinner() {
     recipeContainer.innerHTML = "";
     recipeContainer.insertAdjacentHTML("afterbegin", spinnerHtml);
 }
-// function fetchData(){
-// renderSpinner()
-// }
 const elements = function(recipeItems) {
-    // console.log(recipeItems)
     let html = `<figure class="recipe__fig">
   <img src='${recipeItems.image_url}' alt="Tomato" class="recipe__img" />
   <h1 class="recipe__title">
@@ -874,16 +858,12 @@ searchButton.addEventListener("click", async function(e) {
 async function sideRecipes(name) {
     const data1 = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes?search=${name}`);
     const JSON = await data1.json();
-    // let arr=await JSON.data.recipe;
     let arr = await JSON.data.recipes;
-    // console.log(arr)
-    // elements(arr)
     elem(arr);
 }
 function elem(element) {
     resultsContainer.innerHTML = "";
     element.map((item)=>{
-        // console.log(item)
         let html = `
                 <li class="preview">
             <a class="preview__link preview__link--active" href="#${item.id}">
